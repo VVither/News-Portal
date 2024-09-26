@@ -1,14 +1,16 @@
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.forms.models import BaseModelForm
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
 from django.utils import timezone
-from .filters import PostFilter
 from django.shortcuts import render
-from .forms import PostForm
 from django.urls import reverse_lazy
-from django.http import Http404
+from django.http import Http404, HttpResponse
+from .models import Post
+from .filters import PostFilter
+from .forms import PostForm
+
 
 class PostListView(ListView): # Представление для вывода общего списка
     model = Post
@@ -70,7 +72,7 @@ class NewsDetailView(DetailView): #Представление для вывод�
 class ArticlesDetailView(DetailView): # Представление для вывода детализации статей
     model = Post
     template_name = 'articles/articles_detail.html'
-    context_object_name = 'articles'
+    context_object_name = 'post'
 
     def get_object(self, queryset=None):
         post = super().get_object(queryset)
@@ -87,10 +89,20 @@ class NewsCreate(CreateView): # Представление для создани
     model = Post
     template_name = 'news/news_edit.html'
 
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.post_type = 'Новость'
+        return super().form_valid(form)
+
 class ArticlesCreate(CreateView): # Представление для создания статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.post_type = 'Статья'
+        return super().form_valid(form) 
 
 class NewsUpdate(UpdateView): # Представление для создания новостей
     form_class = PostForm
