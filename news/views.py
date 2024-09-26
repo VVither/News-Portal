@@ -80,9 +80,20 @@ class ArticlesDetailView(DetailView): # Представление для выв
             raise Http404("Это не статья!")
         return post
 
-def search_posts(request): # представление для поиска
-    f = PostFilter(request.GET, queryset=Post.objects.all())
-    return render(request, 'news/search_result.html', {'filter': f})
+class PostSearchView(ListView): # Представление для поиска
+    model = Post
+    template_name = 'news/search_result.html'
+    context_object_name = 'posts'
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filters'] = self.filterset
+        return context
 
 class NewsCreate(CreateView): # Представление для создания новостей
     form_class = PostForm

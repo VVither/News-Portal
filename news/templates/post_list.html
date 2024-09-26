@@ -21,7 +21,7 @@
             {% for post in posts %}
                 <article>
                     <h3>
-                        <a href="{% if post.post_type == 'Новость' or 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                        <a href="{% if post.post_type == 'Новость' or post.post_type == 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
                             {{ post.title|censor }}
                         </a>
                     </h3>
@@ -30,7 +30,7 @@
                     <p>{{ post.preview|truncatewords:20|censor }}...</p>  
                     {% if post.content|length > 30 %}
                         <p>
-                            <a href="{% if post.post_type == 'Новость' or 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                            <a href="{% if post.post_type == 'Новость' or post.post_type == 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
                                 Читать далее
                             </a>
                         </p>

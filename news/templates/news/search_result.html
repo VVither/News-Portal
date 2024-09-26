@@ -2,26 +2,37 @@
 {% load custom_filter %}
 
 {% block content %}
-    <h1>Результаты поиска</h1>
-    <form action="{% url 'news:search' %}" method="get">
-        <input type="text" name="title" placeholder="Поиск по названию...">
-        <input type="text" name="author" placeholder="Поиск по автору...">
-        <input type="date" name="created_at" placeholder="Дата публикации...">
-        <button type="submit">Поиск</button>
-    </form>
-    <h2>Результаты поиска</h2>
-    <ul>
-        {% for post in filter.qs %}
-        <article>
-            <h3><a href="{% url 'news:news_detail' post.id %}">{{ post.title|censor }}</a></h3>  <!-- Ссылка на детальную страницу поста -->
-            <p><strong>Дата публикации:</strong> {{ post.created_at|date:"d.m.Y" }}</p>  <!-- Дата -->
-            <p>{{ post.preview|truncatewords:20|censor }}...</p>  <!-- Первые 20 символов содержимого или 30 символов-->
-            {% if post.content|length > 30 %}
-                <p><a href="{% url 'news:news_detail' post.id %}">Читать далее</a></p>  
-            {% endif %} 
-        </article>
-        {% empty %}
-            <li>Нет результатов.</li>
+<form action="{% url 'news:search' %}" method="get">
+    <input type="text" name="title" placeholder="Поиск по названию...">
+    <input type="text" name="author" placeholder="Поиск по автору...">
+    <input type="date" name="created_at">
+    <button type="submit">Поиск</button>
+</form>
+
+<h2>Результаты поиска:</h2>
+<ul>
+    {% if posts %}
+        {% for post in posts %}
+            <article>
+                <h3>
+                    <a href="{% if post.post_type == 'Новость' or post.post_type == 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                        {{ post.title|censor }}
+                    </a>
+                </h3>
+                <p>Post PK:{{ post.pk}}</p>
+                <p><strong>Дата публикации:</strong> {{ post.created_at|date:"d.m.Y" }}</p>
+                <p>{{ post.preview|truncatewords:20|censor }}...</p>  
+                {% if post.content|length > 30 %}
+                    <p>
+                        <a href="{% if post.post_type == 'Новость' or post.post_type == 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                            Читать далее
+                        </a>
+                    </p>
+                {% endif %}
+            </article>
         {% endfor %}
-    </ul>
+    {% else %}
+        <p>Нет новостей.</p>
+    {% endif %}
+</ul>
 {% endblock %}
