@@ -1,0 +1,63 @@
+{% extends "default.html" %}
+{% load custom_filter %}
+
+{% block title %}Новости{% endblock %}
+{% block nav_links %}
+
+{% endblock %}
+
+{% block content %}
+    <h2>Новости</h2>
+    </p>Всего новостей: {{post_count }}</p>
+    
+    <form action="{% url 'news:search' %}" method="get">
+        <input type="text" name="title" placeholder="Поиск по названию...">
+        <input type="text" name="author" placeholder="Поиск по автору...">
+        <input type="date" name="created_at">
+        <button type="submit">Поиск</button>
+    </form>
+    <ul>
+        {% if posts %}
+            {% for post in posts %}
+                <article>
+                    <h3>
+                        <a href="{% if post.post_type == 'Новость' or 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                            {{ post.title|censor }}
+                        </a>
+                    </h3>
+                    <p>Post PK:{{ post.pk}}</p>
+                    <p><strong>Дата публикации:</strong> {{ post.created_at|date:"d.m.Y" }}</p>
+                    <p>{{ post.preview|truncatewords:20|censor }}...</p>  
+                    {% if post.content|length > 30 %}
+                        <p>
+                            <a href="{% if post.post_type == 'Новость' or 'NW' %}{% url 'news:news_detail' post.pk %}{% else %}{% url 'news:articles_detail' post.pk %}{% endif %}">
+                                Читать далее
+                            </a>
+                        </p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% else %}
+            <p>Нет новостей.</p>
+        {% endif %}
+    </ul>
+    {# Добавляем прогинацию на страницу #}
+    {# Информация о предыдущей странице #}
+    {% if page_obj.has_previous %}
+        <a href='?page=1' >1</a>
+        {% if page_obj.has_previous_page_number != 1%}
+            ...
+            <a href="?page={{ page_obj.has_previous_page_number }}"> {{ page_obj.has_previous_page_number}} </a>
+        {%  endif %}
+    {% endif %}
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+    {#Информация о текущей следующей странице #}
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+    {% if paginator.num_pages != page_obj.next_page_number %}
+        ...
+        <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+    {% endif %}
+{% endif %}
+{% endblock content%}

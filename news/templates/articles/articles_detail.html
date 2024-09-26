@@ -1,0 +1,16 @@
+{% extends "default.html" %}
+{% load custom_filter %}
+
+{% block title %}{{ articles.title|censor }}{% endblock %}
+
+{% block content %}
+    <article>
+        <p>Post PK:{{ post.pk}}</p>
+        <a href="{% url 'news:articles_update' articles.pk %}">Редактировать</a>
+        <a href="{% url 'news:articles_delete' articles.pk %}">Удалить</a>
+        <h2>{{ post.title|censor }}</h2>
+        <p><strong>Опубликовано:</strong> {{ articles.created_at|date:"d.M.Y" }}</p>
+        <p>{{ articles.content|censor }}</p>
+    </article>
+    <a href="{% url 'news:articles_list' %}">Назад к новостям</a>
+{% endblock %}

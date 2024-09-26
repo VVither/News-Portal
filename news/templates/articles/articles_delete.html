@@ -1,0 +1,11 @@
+{% extends "default.html" %}
+
+{% block content %}
+<h1>Удаление статьи</h1>
+<hr>
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Вы уверены? Этот процесс необратим "{{ object.name }}"?</p>
+    <input type="submit" value="Delete" />
+</form>
+{% endblock content %}
