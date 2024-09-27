@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django_filters', # Приложение с фильтрами
 ]
+LOGIN_REDIRECT_URL = '/post/'  # URL, куда перенаправлять после входа
+
+LOGOUT_REDIRECT_URL = '/post/'  # URL, куда перенаправлять после выхода
 
 SITE_ID = 1
 
@@ -128,3 +131,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -10,9 +10,10 @@
         <h1>Мой веб-сайт</h1>
         <nav>
             <ul>
+                <li><a href="{% url 'news:login' %}">Вход</a></li>
+                <li><a href="{% url 'news:register' %}">Регистрация</a></li>
                 {% block nav_links %}
                 <li><a href="{% url 'news:post_list' %}">Главная страница</a></li>
-                <!-- Другие ссылки -->
                  {% endblock %}
             </ul>
         </nav>

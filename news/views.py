@@ -1,15 +1,18 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import views as auth_views
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
+from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.utils import timezone
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http import Http404, HttpResponse
 from .models import Post
 from .filters import PostFilter
-from .forms import PostForm
+from .forms import PostForm, UserRegistrationForm
 
 
 class PostListView(ListView): # Представление для вывода общего списка
@@ -95,6 +98,7 @@ class PostSearchView(ListView): # Представление для поиска
         context['filters'] = self.filterset
         return context
 
+@method_decorator(login_required, name='dispatch')
 class NewsCreate(CreateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
@@ -105,6 +109,7 @@ class NewsCreate(CreateView): # Представление для создани
         post.post_type = 'Новость'
         return super().form_valid(form)
 
+@method_decorator(login_required, name='dispatch')
 class ArticlesCreate(CreateView): # Представление для создания статей
     form_class = PostForm
     model = Post
@@ -115,22 +120,35 @@ class ArticlesCreate(CreateView): # Представление для созда
         post.post_type = 'Статья'
         return super().form_valid(form) 
 
+@method_decorator(login_required, name='dispatch')
 class NewsUpdate(UpdateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
 
+@method_decorator(login_required, name='dispatch')
 class ArticlesUpdate(UpdateView): # Представление для изменения статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
 
+@method_decorator(login_required, name='dispatch')
 class NewsDelete(DeleteView): # Представление для удаления новостей
     model = Post
     template_name = 'news/news_delete.html'
     success_url = reverse_lazy('news:news_list')
 
+@method_decorator(login_required, name='dispatch')
 class ArticlesDelete(DeleteView): # Представление для удаления статей
     model = Post
     template_name = 'articles/articles_delete.html'
     success_url = reverse_lazy('news:articles_list')
+
+class UserRegisterView(CreateView):
+    template_name = 'registration/register.html'
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy('login')  # перенаправление после успешной регистрации
+
+class UserLoginView(auth_views.LoginView):
+    template_name = 'registration/login.html' 
+
