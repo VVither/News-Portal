@@ -1,0 +1,88 @@
+
+body {
+    background-image: url('images/background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+h1 {
+    color: #ffffff;
+}
+
+h2 {
+    color: #ffffff;
+}
+
+h3 {
+    color: #ffffff;
+}
+
+rb {
+    color: #ffffff;
+}
+
+q {
+    color: #ffffff7e;
+}
+
+article {
+     background: #fffcfcc9;
+    /* background-image: url('images/article.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center; */
+    border: 2px solid #242424;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+header {
+    background: #dfdbdb86;
+    border: 1px solid #242424;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.top-right {
+    background: #fffcfce1;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    border: 2px solid #ffffffbe;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+nav ul {
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin-left: 20px; /* Отступ между элементами списка */
+}
+
+nav ul li a {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: #007BFF; /* Цвет ссылок */
+    padding: 10px 15px; /* Поля вокруг текста */
+    border: 1px solid transparent; /* Граница по умолчанию */
+    border-radius: 5px; /* Закругленные углы */
+    transition: background-color 0.3s; /* Плавный переход фона */
+}
+
+nav ul li a:hover {
+    background-color: #007BFF; /* Цвет фона при наведении */
+    color: white; /* Цвет текста при наведении */
+    border: 1px solid #007BFF; /* Граница при наведении */
+}
+
+footer {
+    text-align: center; /* Центрируем текст в футере */
+    padding: 10px; /* Поля футера */
+    background-color: #f8f9fa; /* Цвет фона футера */
+}

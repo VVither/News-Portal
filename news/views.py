@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
@@ -98,8 +99,8 @@ class PostSearchView(ListView): # Представление для поиска
         context['filters'] = self.filterset
         return context
 
-@method_decorator(login_required, name='dispatch')
-class NewsCreate(CreateView): # Представление для создания новостей
+
+class NewsCreate(LoginRequiredMixin ,CreateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
@@ -109,8 +110,8 @@ class NewsCreate(CreateView): # Представление для создани
         post.post_type = 'Новость'
         return super().form_valid(form)
 
-@method_decorator(login_required, name='dispatch')
-class ArticlesCreate(CreateView): # Представление для создания статей
+
+class ArticlesCreate(LoginRequiredMixin, CreateView): # Представление для создания статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
@@ -120,26 +121,26 @@ class ArticlesCreate(CreateView): # Представление для созда
         post.post_type = 'Статья'
         return super().form_valid(form) 
 
-@method_decorator(login_required, name='dispatch')
-class NewsUpdate(UpdateView): # Представление для создания новостей
+
+class NewsUpdate(LoginRequiredMixin, UpdateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
 
-@method_decorator(login_required, name='dispatch')
-class ArticlesUpdate(UpdateView): # Представление для изменения статей
+
+class ArticlesUpdate(LoginRequiredMixin, UpdateView): # Представление для изменения статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
 
-@method_decorator(login_required, name='dispatch')
-class NewsDelete(DeleteView): # Представление для удаления новостей
+
+class NewsDelete(LoginRequiredMixin, DeleteView): # Представление для удаления новостей
     model = Post
     template_name = 'news/news_delete.html'
     success_url = reverse_lazy('news:news_list')
 
-@method_decorator(login_required, name='dispatch')
-class ArticlesDelete(DeleteView): # Представление для удаления статей
+
+class ArticlesDelete(LoginRequiredMixin, DeleteView): # Представление для удаления статей
     model = Post
     template_name = 'articles/articles_delete.html'
     success_url = reverse_lazy('news:articles_list')

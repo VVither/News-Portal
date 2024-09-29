@@ -7,9 +7,9 @@ from .views import ArticlesCreate, ArticlesDetailView, ArticlesListView, Article
 app_name = 'news'
 
 urlpatterns = [
-    path('login/', UserLoginView.as_view(), name='login'),
-    path('register/', UserRegisterView.as_view(), name='register'),
-    path('logout/', auth_views.LogoutView.as_view(), name= 'logout'),
+    # path('login/', UserLoginView.as_view(), name='login'),
+    # path('register/', UserRegisterView.as_view(), name='register'),
+    # path('logout/', auth_views.LogoutView.as_view(), name= 'logout'),
     path('post/', PostListView.as_view(), name='post_list'), # Общий список
     path('post/news/', NewsListView.as_view(), name='news_list'), # Cписок новостей
     path('post/news/<int:pk>/', NewsDetailView.as_view(), name='news_detail'), # Детализация новости

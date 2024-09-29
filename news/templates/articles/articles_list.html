@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Новости</h2>
-    </p>Всего новостей: {{articles_count }}</p>
+    <h2>Статьи</h2>
+    </p>Всего статей: {{articles_count }}</p>
     
     <form action="{% url 'news:search' %}" method="get">
         <input type="text" name="title" placeholder="Поиск по названию...">

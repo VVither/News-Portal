@@ -1,31 +1,35 @@
 <html lang="ru">
+    {% load static %}
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type='text/css' href="{% static 'styles.css' %}">  <!-- Подключение стилей -->
     <title>{% block title %}Мой сайт{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'news/css/styles.css' %}">  <!-- Подключение стилей -->
 </head>
 <body>
     <header>
         <h1>Мой веб-сайт</h1>
         <nav>
-            <ul>
-                <li><a href="{% url 'news:login' %}">Вход</a></li>
-                <li><a href="{% url 'news:register' %}">Регистрация</a></li>
-                {% block nav_links %}
+            <ul style="list-style: none; display: flex; justify-content: flex-end; padding: 0; margin: 0;">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'account_logout' %}">Выход</a></li>
+                {% else %}
+                    <li><a href="{% url 'account_login' %}">Вход</a></li>
+                    <li><a href="{% url 'account_signup' %}">Регистрация</a></li>
+                {% endif %}
                 <li><a href="{% url 'news:post_list' %}">Главная страница</a></li>
-                 {% endblock %}
             </ul>
         </nav>
     </header>
     
     <main>
         {% block content %}
+                <!-- Содержимое страницы будет отображаться здесь -->
         {% endblock %}
     </main>
 
     <footer>
-        <p>© {{ year }} Мой веб-сайт</p>
+        <q>© {{ year }} Мой веб-сайт</q>
     </footer>
 </body>
 </html>

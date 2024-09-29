@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import allauth
+import allauth.socialaccount
+import allauth.socialaccount.providers
+import allauth.socialaccount.providers.yandex
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,10 +46,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django_filters', # Приложение с фильтрами
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex'
 ]
-LOGIN_REDIRECT_URL = '/post/'  # URL, куда перенаправлять после входа
-
-LOGOUT_REDIRECT_URL = '/post/'  # URL, куда перенаправлять после выхода
 
 SITE_ID = 1
 
@@ -57,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'News_Portal.urls'
@@ -76,6 +83,18 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # стандартный бэкенд
+    'allauth.account.auth_backends.AuthenticationBackend',  # allauth
+)
+
+LOGIN_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после входа
+ACCOUNT_LOGOUT_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после выхода
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Выберите 'mandatory', если хотите проверку почты
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_USERNAME_REQUIRED = True
 
 WSGI_APPLICATION = 'News_Portal.wsgi.application'
 
@@ -125,7 +144,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
