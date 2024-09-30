@@ -92,7 +92,7 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после входа
 ACCOUNT_LOGOUT_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после выхода
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Выберите 'mandatory', если хотите проверку почты
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_USERNAME_REQUIRED = True
 
@@ -151,3 +151,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ACCOUNT_FORMS = {'signup': 'news.forms.BasicSingupForm'}

@@ -57,10 +57,8 @@ class Post(models.Model):
         if self.post_type == 'NW':
             return reverse("news:news_detail", args=[str(self.id)])
         else: 
-            return reverse("news:articles_detail", args=[str(self.id)])
-
-    
-    
+            return reverse("news:articles_detail", args=[str(self.id)])    
+        
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

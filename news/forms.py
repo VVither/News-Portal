@@ -2,7 +2,8 @@ from django import forms
 from .models import Post
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from allauth.account.forms import SignupForm
 
 class UserRegistrationForm(UserCreationForm): # Форма регистрации
     email = forms.EmailField()    
@@ -40,8 +41,10 @@ class PostForm(forms.ModelForm): # Форма для поиска
             )
         return cleaned_data
 
+class BasicSingupForm(SignupForm):
 
-
-
-
-
+    def save(self, request):
+        user = super(BasicSingupForm, self).save(request)
+        basic_group = Group.objects.get(name='common')
+        basic_group.user_set.add(user)
+        return user
