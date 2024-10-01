@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import PostListView, PostSearchView, UserRegisterView, UserLoginView
+from .views import PostListView, PostSearchView, UserRegisterView, UserLoginView, upgrade_me, profile_view
 from .views import NewsListView, NewsDetailView, NewsCreate, NewsUpdate, NewsDelete
 from .views import ArticlesCreate, ArticlesDetailView, ArticlesListView, ArticlesUpdate, ArticlesDelete
 
@@ -8,8 +8,8 @@ app_name = 'news'
 
 urlpatterns = [
     # path('login/', UserLoginView.as_view(), name='login'),
-    # path('register/', UserRegisterView.as_view(), name='register'),
-    # path('logout/', auth_views.LogoutView.as_view(), name= 'logout'),
+    path('profile/', profile_view, name='profile_view'),
+    path('upgrade/', upgrade_me, name= 'upgrade'),
     path('post/', PostListView.as_view(), name='post_list'), # Общий список
     path('post/news/', NewsListView.as_view(), name='news_list'), # Cписок новостей
     path('post/news/<int:pk>/', NewsDetailView.as_view(), name='news_detail'), # Детализация новости

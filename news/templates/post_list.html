@@ -7,6 +7,12 @@
 {% endblock %}
 
 {% block content %}
+{% if not is_author %}
+<form action="{% url 'news:upgrade' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Стать автором</button>
+</form>
+{% endif %}
     <h2>Главная страница</h2>
 
     <h3>Всего постов: {{post_count }}</h3>
@@ -17,6 +23,7 @@
         <input type="date" name="created_at">
         <button type="submit">Поиск</button>
     </form>
+
     <ul>
         {% if posts %}
             {% for post in posts %}

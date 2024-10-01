@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.contrib.auth import views as auth_views
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
 from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.utils import timezone
 from django.shortcuts import render
@@ -99,7 +100,6 @@ class PostSearchView(ListView): # Представление для поиска
         context['filters'] = self.filterset
         return context
 
-
 class NewsCreate(LoginRequiredMixin ,CreateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
@@ -109,7 +109,11 @@ class NewsCreate(LoginRequiredMixin ,CreateView): # Представление �
         post = form.save(commit=False)
         post.post_type = 'Новость'
         return super().form_valid(form)
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
+        return context
 
 class ArticlesCreate(LoginRequiredMixin, CreateView): # Представление для создания статей
     form_class = PostForm
@@ -120,25 +124,26 @@ class ArticlesCreate(LoginRequiredMixin, CreateView): # Представлени
         post = form.save(commit=False)
         post.post_type = 'Статья'
         return super().form_valid(form) 
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
+        return context
 
 class NewsUpdate(LoginRequiredMixin, UpdateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
 
-
 class ArticlesUpdate(LoginRequiredMixin, UpdateView): # Представление для изменения статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
 
-
 class NewsDelete(LoginRequiredMixin, DeleteView): # Представление для удаления новостей
     model = Post
     template_name = 'news/news_delete.html'
     success_url = reverse_lazy('news:news_list')
-
 
 class ArticlesDelete(LoginRequiredMixin, DeleteView): # Представление для удаления статей
     model = Post
@@ -153,3 +158,17 @@ class UserRegisterView(CreateView):
 class UserLoginView(auth_views.LoginView):
     template_name = 'registration/login.html' 
 
+@login_required
+def upgrade_me(request):
+    user = request.user
+    author_group = Group.objects.get(name='author')
+    if not user.groups.filter(name='author').exists():
+        author_group.user_set.add(user)
+    return redirect('/post/')
+
+@login_required
+def profile_view(request):
+    user = request.user
+    is_author = user.groups.filter(name='author').exists()
+
+    return render(request, 'post_list.html', {'is_author': is_author})
