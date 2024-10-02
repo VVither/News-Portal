@@ -6,8 +6,10 @@
 {% block content %}
     <article>
         <p>Post PK:{{ post.pk}}</p>
+        {% if %}
         <a href="{% url 'news:news_update' post.pk %}">Редактировать</a>
         <a href="{% url 'news:news_delete' post.pk %}">Удалить</a>
+        {% endif %}
         <h2>{{ post.title|censor }}</h2>
         <p><strong>Опубликовано:</strong> {{ post.created_at|date:"d.M.Y" }}</p>
         <p>{{ post.content|censor }}</p>
