@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import PostListView, PostSearchView, UserRegisterView, UserLoginView, upgrade_me, profile_view
+from .views import PostListView, PostSearchView, upgrade_me, profile_view
 from .views import NewsListView, NewsDetailView, NewsCreate, NewsUpdate, NewsDelete
 from .views import ArticlesCreate, ArticlesDetailView, ArticlesListView, ArticlesUpdate, ArticlesDelete
 
