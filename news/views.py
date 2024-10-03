@@ -150,23 +150,23 @@ class ArticlesUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView): # П�
         post = self.get_object()  # Получаем объект поста
         return self.request.user == post.author or self.request.user.is_staff
 
-class NewsDelete(LoginRequiredMixin, DeleteView): # Представление для удаления новостей
+class NewsDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView): # Представление для удаления новостей
     model = Post
     template_name = 'news/news_delete.html'
     success_url = reverse_lazy('news:news_list')
 
-class ArticlesDelete(LoginRequiredMixin, DeleteView): # Представление для удаления статей
+    def test_func(self):
+        post = self.get_object()  # Получаем объект поста
+        return self.request.user == post.author or self.request.user.is_staff
+
+class ArticlesDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView): # Представление для удаления статей
     model = Post
     template_name = 'articles/articles_delete.html'
     success_url = reverse_lazy('news:articles_list')
 
-class UserRegisterView(CreateView):
-    template_name = 'registration/register.html'
-    form_class = UserRegistrationForm
-    success_url = reverse_lazy('login')  # перенаправление после успешной регистрации
-
-class UserLoginView(auth_views.LoginView):
-    template_name = 'registration/login.html' 
+    def test_func(self):
+        post = self.get_object()  # Получаем объект поста
+        return self.request.user == post.author or self.request.user.is_staff
 
 @login_required
 def upgrade_me(request):
