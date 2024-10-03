@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth import views as auth_views
 from django.db.models.base import Model as Model
@@ -100,7 +100,8 @@ class PostSearchView(ListView): # Представление для поиска
         context['filters'] = self.filterset
         return context
 
-class NewsCreate(LoginRequiredMixin ,CreateView): # Представление для создания новостей
+class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin,CreateView): # Представление для создания новостей
+    permission_required = ('post.add_object', )
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
@@ -115,7 +116,8 @@ class NewsCreate(LoginRequiredMixin ,CreateView): # Представление �
         context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         return context
 
-class ArticlesCreate(LoginRequiredMixin, CreateView): # Представление для создания статей
+class ArticlesCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView): # Представление для создания статей
+    permission_required = ('post.add_object', )
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
@@ -130,15 +132,23 @@ class ArticlesCreate(LoginRequiredMixin, CreateView): # Представлени
         context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
         return context
 
-class NewsUpdate(LoginRequiredMixin, UpdateView): # Представление для создания новостей
+class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView): # Представление для создания новостей
     form_class = PostForm
     model = Post
     template_name = 'news/news_edit.html'
 
-class ArticlesUpdate(LoginRequiredMixin, UpdateView): # Представление для изменения статей
+    def test_func(self):
+        post = self.get_object()  # Получаем объект поста
+        return self.request.user == post.author or self.request.user.is_staff
+
+class ArticlesUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView): # Представление для изменения статей
     form_class = PostForm
     model = Post
     template_name = 'articles/articles_edit.html'
+
+    def test_func(self):
+        post = self.get_object()  # Получаем объект поста
+        return self.request.user == post.author or self.request.user.is_staff
 
 class NewsDelete(LoginRequiredMixin, DeleteView): # Представление для удаления новостей
     model = Post

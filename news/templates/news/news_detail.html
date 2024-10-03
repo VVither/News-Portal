@@ -6,7 +6,7 @@
 {% block content %}
     <article>
         <p>Post PK:{{ post.pk}}</p>
-        {% if %}
+        {% if user == post.author or user.is_staff %}
         <a href="{% url 'news:news_update' post.pk %}">Редактировать</a>
         <a href="{% url 'news:news_delete' post.pk %}">Удалить</a>
         {% endif %}
