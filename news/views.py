@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http import Http404, HttpResponse
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm, UserRegistrationForm
 
@@ -182,3 +182,10 @@ def profile_view(request):
     is_author = user.groups.filter(name='author').exists()
 
     return render(request, 'post_list.html', {'is_author': is_author})
+
+@login_required
+def subscribe_to_category(request, category_id):
+    category = get_object_or_404(category, id=category_id)
+    category.subscribers.add(request.user)
+    return redirect('category_detail', category_id=category.id)
+
