@@ -32,6 +32,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'bogdan.kashirov1999' # здесь ввести email с которого отправляются сообщения  до @
+EMAIL_HOST_PASSWORD = 'B2221540' # Пароль от email
+EMAIL_HOST_SSL = True
 
 # Application definition
 

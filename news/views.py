@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http import Http404, HttpResponse
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm, UserRegistrationForm
 
@@ -73,6 +73,12 @@ class NewsDetailView(DetailView): #Представление для вывод�
         if post.post_type != 'NW' and post.post_type != 'Новость':
            raise Http404('Это не новость!"')
         return post
+
+    def get_context_data(self, **kwargs ):
+        context = super().get_context_data(**kwargs)
+        post = self.geeet_object()
+        context['categories'] = post.categories.all()
+        return context
     
 class ArticlesDetailView(DetailView): # Представление для вывода детализации статей
     model = Post
@@ -182,3 +188,10 @@ def profile_view(request):
     is_author = user.groups.filter(name='author').exists()
 
     return render(request, 'post_list.html', {'is_author': is_author})
+
+@login_required
+def subscribe_to_category(request, category_id):
+    category = get_object_or_404(category, id=category_id)
+    category.subscribers.add(request.user)
+    return redirect('category_detail', category_id=category.id)
+
