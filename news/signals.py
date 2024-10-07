@@ -14,4 +14,4 @@ def notify_subscribers(sender, instance, created, **kwargs):
                 'title': instance.title,
                 'content': instance.content[:50],  # первые 50 символов контента
             })
-            send_mail(subject, '', 'from@example.com', [email], html_message=html_content)
+            send_mail(subject, '', 'bogdan.kashirov1999@yandex.ru', [email], html_message=html_content)

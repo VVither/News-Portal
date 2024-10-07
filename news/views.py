@@ -73,6 +73,12 @@ class NewsDetailView(DetailView): #Представление для вывод�
         if post.post_type != 'NW' and post.post_type != 'Новость':
            raise Http404('Это не новость!"')
         return post
+
+    def get_context_data(self, **kwargs ):
+        context = super().get_context_data(**kwargs)
+        post = self.geeet_object()
+        context['categories'] = post.categories.all()
+        return context
     
 class ArticlesDetailView(DetailView): # Представление для вывода детализации статей
     model = Post
