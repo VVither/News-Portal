@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from .views import PostListView, PostSearchView, upgrade_me, profile_view
 from .views import NewsListView, NewsDetailView, NewsCreate, NewsUpdate, NewsDelete
 from .views import ArticlesCreate, ArticlesDetailView, ArticlesListView, ArticlesUpdate, ArticlesDelete
+from .views import CategoryListView, CategoryDetailView, subscribe_to_category
 
 app_name = 'news'
 
@@ -22,5 +23,7 @@ urlpatterns = [
     path('post/articles/create', ArticlesCreate.as_view(), name='articles_create'), # Создание статьи
     path('post/articles/<int:pk>/update/', ArticlesUpdate.as_view(), name='articles_update'), # Редактирование статьи
     path('post/articles/<int:pk>/delete/', ArticlesDelete.as_view(), name='articles_delete'), # Подтверждение удаления статьи
-
+    path('category/', CategoryListView.as_view(), name='category_list'),
+    path('category/<int:category_id>/', CategoryDetailView.as_view(), name='category_detail'),
+    path('category/<int:category_id>/subscribe/', subscribe_to_category, name='subscribe_to_category'),    
 ]

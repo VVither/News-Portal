@@ -1,0 +1,19 @@
+{% extends 'default.html' %} 
+
+{% block content %}
+    <h1>Список категорий</h1>
+    <ul>
+        {% for category in categories %}
+            <li>
+                <h2><a href="{% url 'news:category_detail' category_id=category.pk %}">{{ category.name }}</a></h2>
+                <a href="{% url 'news:subscribe_to_category' category_id=category.pk %}">
+                    {% if user in category.subscribers.all %}
+                        Отписаться
+                    {% else %}
+                        Подписаться
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
