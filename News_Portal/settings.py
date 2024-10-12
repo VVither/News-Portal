@@ -32,13 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.com'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'bogdan.kashirov1999' # здесь ввести email с которого отправляются сообщения  до @
-EMAIL_HOST_PASSWORD = 'B2221540' # Пароль от email
-EMAIL_HOST_SSL = True
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,9 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news', # приложение с модулем новостей
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'news.apps.NewsConfig',
+    'django_apscheduler',
     'django_filters', # Приложение с фильтрами
     'allauth',
     'allauth.account',
@@ -103,8 +97,19 @@ ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_USERNAME_REQUIRED = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = '' # здесь ввести email с которого отправляются сообщения  до @
+EMAIL_HOST_PASSWORD = '' # Пароль от email
+EMAIL_HOST_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"
+
 WSGI_APPLICATION = 'News_Portal.wsgi.application'
 
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+ 
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -157,5 +162,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-ACCOUNT_FORMS = {'signup': 'news.forms.BasicSingupForm'}

@@ -3,18 +3,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, 
 from django.contrib.auth.models import Group
 from django.contrib.auth import views as auth_views
 from django.db.models.base import Model as Model
-from django.db.models.query import QuerySet
-from django.forms.models import BaseModelForm
-from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.utils import timezone
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from .models import Post, Category
 from .filters import PostFilter
-from .forms import PostForm, UserRegistrationForm
+from .forms import PostForm
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils import timezone
+import datetime
+
 
 
 class PostListView(ListView): # Представление для вывода общего списка
@@ -76,7 +79,7 @@ class NewsDetailView(DetailView): #Представление для вывод�
 
     def get_context_data(self, **kwargs ):
         context = super().get_context_data(**kwargs)
-        post = self.geeet_object()
+        post = self.get_object()
         context['categories'] = post.categories.all()
         return context
     
@@ -174,6 +177,21 @@ class ArticlesDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView): # П�
         post = self.get_object()  # Получаем объект поста
         return self.request.user == post.author or self.request.user.is_staff
 
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'category_list.html'
+    context_object_name = 'categories'
+
+class CategoryDetailView(DetailView):
+    model = Category
+    template_name = 'category_detail.html'
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = self.object.post_set.all()
+        return context
+    
 @login_required
 def upgrade_me(request):
     user = request.user
@@ -191,7 +209,45 @@ def profile_view(request):
 
 @login_required
 def subscribe_to_category(request, category_id):
-    category = get_object_or_404(category, id=category_id)
-    category.subscribers.add(request.user)
-    return redirect('category_detail', category_id=category.id)
+    category = get_object_or_404(Category, id=category_id)
+    if request.user.is_authenticated:
+        if request.user in category.subscribers.all():
+            category.subscribers.remove(request.user)
+            message = "Вы отписались от этой категории."
+        else:
+            category.subscribers.add(request.user)
+            message = "Вы подписались на эту категорию!"
+        return redirect('news:category_list')
+    else:
+        return redirect('login')  # Перенаправьте на страницу входа, если пользователь не авторизован
 
+def send_weekly_newsletter():
+    """Отправляет еженедельную рассылку новых статей подписчикам"""
+    today = timezone.now()
+    last_week = today - datetime.timedelta(days=7)
+
+    for category in Category.objects.all():
+        new_posts = category.post_set.filter(
+            created_at__gte=last_week,
+            created_at__lt=today
+        )
+        for subscriber in category.subscribers.all():
+            if new_posts.exists():
+                # Рендеринг HTML шаблона письма
+                html_message = render_to_string(
+                    'weekly_newsletter.html',
+                    {
+                        'category': category,
+                        'new_posts': new_posts,
+                        'user': subscriber,
+                    },
+                )
+
+                # Отправка письма
+                send_mail(
+                    subject=f'Новые статьи в категории {category.name}',
+                    message='',
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[subscriber.email],
+                    html_message=html_message,
+                )

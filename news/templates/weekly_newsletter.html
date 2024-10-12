@@ -1,0 +1,9 @@
+<h1>Новые статьи в категории {{ category.name }}</h1>
+<ul>
+  {% for post in new_posts %}
+    <li>
+      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+<p>Здравствуй, {{ user.username }}!  </p>

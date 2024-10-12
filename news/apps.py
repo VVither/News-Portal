@@ -6,4 +6,5 @@ class NewsConfig(AppConfig):
     name = 'news'
 
     def ready(self):
-        import news.signals
+        from .scheduler import start
+        start()  # Запуск планировщика

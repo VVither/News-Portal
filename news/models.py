@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from datetime import date
+from django.core.exceptions import ValidationError
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -18,7 +20,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    subscribers = models.ManyToManyField(User, related_name='subscribed_categories', blank=True)
+    subscribers = models.ManyToManyField(User, blank=True, related_name='subscribed_categories')
 
     def __str__(self):
         return self.name
@@ -59,6 +61,20 @@ class Post(models.Model):
             return reverse("news:news_detail", args=[str(self.id)])
         else: 
             return reverse("news:articles_detail", args=[str(self.id)])    
+        
+    def save(self, *args, **kwargs):
+        # Проверка количества публикаций в день
+        created_at = date.today()
+        if self.author:
+            last_posts = Post.objects.filter(
+                author=self.author, created_at=created_at
+            ).count()
+            if last_posts >= 3:
+                raise ValidationError(
+                    "Вы можете публиковать не более трёх новостей в день."
+                )
+
+        super().save(*args, **kwargs)
         
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
