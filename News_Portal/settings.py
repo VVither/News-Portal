@@ -89,7 +89,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # стандартный бэкенд
     'allauth.account.auth_backends.AuthenticationBackend',  # allauth
 )
-
+   # НАСТРОЙКИ АВТОРИЗАЦИИ
 LOGIN_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после входа
 ACCOUNT_LOGOUT_REDIRECT_URL = '/post/'  # URL, на который пользователи будут перенаправлены после выхода
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Выберите 'mandatory', если хотите проверку почты
@@ -97,6 +97,7 @@ ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_USERNAME_REQUIRED = True
 
+      # НАСТРОЙКИ EMAIL
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -104,6 +105,13 @@ EMAIL_HOST_USER = '' # здесь ввести email с которого отп�
 EMAIL_HOST_PASSWORD = '' # Пароль от email
 EMAIL_HOST_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"
+
+      # НАСТРОЙКИ АССИНХРОННОЙ РАБОТЫ
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 WSGI_APPLICATION = 'News_Portal.wsgi.application'
 
