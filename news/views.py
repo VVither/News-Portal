@@ -16,7 +16,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils import timezone
-import datetime
+from datetime import timedelta, date
+from celery import shared_task
 
 
 
@@ -220,34 +221,3 @@ def subscribe_to_category(request, category_id):
         return redirect('news:category_list')
     else:
         return redirect('login')  # Перенаправьте на страницу входа, если пользователь не авторизован
-
-def send_weekly_newsletter():
-    """Отправляет еженедельную рассылку новых статей подписчикам"""
-    today = timezone.now()
-    last_week = today - datetime.timedelta(days=7)
-
-    for category in Category.objects.all():
-        new_posts = category.post_set.filter(
-            created_at__gte=last_week,
-            created_at__lt=today
-        )
-        for subscriber in category.subscribers.all():
-            if new_posts.exists():
-                # Рендеринг HTML шаблона письма
-                html_message = render_to_string(
-                    'weekly_newsletter.html',
-                    {
-                        'category': category,
-                        'new_posts': new_posts,
-                        'user': subscriber,
-                    },
-                )
-
-                # Отправка письма
-                send_mail(
-                    subject=f'Новые статьи в категории {category.name}',
-                    message='',
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[subscriber.email],
-                    html_message=html_message,
-                )

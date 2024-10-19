@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import date
 from django.core.exceptions import ValidationError
+from .tasks import send_new_post_notification
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -75,6 +76,7 @@ class Post(models.Model):
                 )
 
         super().save(*args, **kwargs)
+        send_new_post_notification.delay(self.pk) 
         
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
