@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Author, Category, Post, PostCategory, Comment, BadWord
+
+from .models import Author, BadWord, Category, Comment, Post, PostCategory
 
 admin.site.register(Author)
 admin.site.register(Category)

@@ -1,8 +1,12 @@
-from datetime import timedelta, date
+from datetime import date, timedelta
+
 from celery import shared_task
-from django.core.mail import send_mail
 from django.conf import settings
+from django.core.mail import send_mail
+from django.urls import reverse
+
 from .models import Category, Post
+
 
 @shared_task
 def send_weekly_email():
@@ -54,3 +58,9 @@ def send_new_post_notification(post_id):
                 recipient_list=[subscriber.email],
                 fail_silently=False
             )
+
+def get_absolute_url(post):
+    if post.post_type == 'NW':
+        return reverse("news:news_detail", args=[str(post.id)])
+    else:
+        return reverse("news:articles_detail", args=[str(post.id)])

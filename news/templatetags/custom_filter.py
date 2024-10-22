@@ -1,4 +1,5 @@
 from django import template
+
 from news.models import BadWord
 
 register = template.Library()

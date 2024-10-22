@@ -1,7 +1,9 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.core.mail import send_mail
-from news.models import Post, Category
 from django.utils import timezone
+
+from news.models import Category, Post
+
 
 def send_weekly_emails():
     categories = Category.objects.all()

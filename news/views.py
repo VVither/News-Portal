@@ -1,24 +1,26 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-from django.contrib.auth.models import Group
+from datetime import date, timedelta
+
+from celery import shared_task
+from django.conf import settings
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin,
+                                        UserPassesTestMixin)
+from django.contrib.auth.models import Group
+from django.core.mail import send_mail
 from django.db.models.base import Model as Model
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.utils import timezone
-from django.shortcuts import render
-from django.urls import reverse_lazy
 from django.http import Http404
-from .models import Post, Category
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
+
 from .filters import PostFilter
 from .forms import PostForm
-from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils import timezone
-from datetime import timedelta, date
-from celery import shared_task
-
+from .models import Category, Post
 
 
 class PostListView(ListView): # Представление для вывода общего списка

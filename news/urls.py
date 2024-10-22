@@ -1,10 +1,12 @@
-from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import PostListView, PostSearchView, upgrade_me, profile_view
-from .views import NewsListView, NewsDetailView, NewsCreate, NewsUpdate, NewsDelete
-from .views import ArticlesCreate, ArticlesDetailView, ArticlesListView, ArticlesUpdate, ArticlesDelete
-from .views import CategoryListView, CategoryDetailView, subscribe_to_category
+from django.urls import path
 from django.views.decorators.cache import cache_page
+
+from .views import (ArticlesCreate, ArticlesDelete, ArticlesDetailView,
+                    ArticlesListView, ArticlesUpdate, CategoryDetailView,
+                    CategoryListView, NewsCreate, NewsDelete, NewsDetailView,
+                    NewsListView, NewsUpdate, PostListView, PostSearchView,
+                    profile_view, subscribe_to_category, upgrade_me)
 
 app_name = 'news'
 

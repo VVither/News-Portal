@@ -1,9 +1,12 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.urls import reverse
 from datetime import date
+
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .tasks import send_new_post_notification
+from django.db import models
+from django.urls import reverse
+
+from .tasks import get_absolute_url, send_new_post_notification
+
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -55,13 +58,17 @@ class Post(models.Model):
         self.save()
 
     def __str__(self):
-        return self.title
+        return self.title  
     
     def get_absolute_url(self):
-        if self.post_type == 'NW':
-            return reverse("news:news_detail", args=[str(self.id)])
-        else: 
-            return reverse("news:articles_detail", args=[str(self.id)])    
+        return get_absolute_url(self)
+    
+    def _set_categories(self, *args, **kwargs):
+            if 'categories' in kwargs:
+                categories = kwargs['categories']
+                if categories:
+                    for category in categories:
+                        PostCategory.objects.get_or_create(post=self, category=category)
         
     def save(self, *args, **kwargs):
         # Проверка количества публикаций в день
@@ -75,9 +82,10 @@ class Post(models.Model):
                     "Вы можете публиковать не более трёх новостей в день."
                 )
 
+        self._set_categories(*args, **kwargs)
         super().save(*args, **kwargs)
         send_new_post_notification.delay(self.pk) 
-        
+            
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

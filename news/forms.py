@@ -1,9 +1,11 @@
-from django import forms
-from .models import Post
-from django.core.exceptions import ValidationError
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User, Group
 from allauth.account.forms import SignupForm
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group, User
+from django.core.exceptions import ValidationError
+
+from .models import Post
+
 
 class UserRegistrationForm(UserCreationForm): # Форма регистрации
     email = forms.EmailField()    
