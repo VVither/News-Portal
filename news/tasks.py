@@ -3,7 +3,6 @@ from datetime import date, timedelta
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
-from django.urls import reverse
 
 from .models import Category, Post
 
@@ -37,30 +36,3 @@ def send_weekly_email():
                     recipient_list=[subscriber.email],
                     fail_silently=False
                 )
-
-@shared_task
-def send_new_post_notification(post_id):
-    """
-    Отправляет уведомление подписчикам категории о создании нового поста.
-    """
-    post = Post.objects.get(pk=post_id)
-    for category in post.categories.all():
-        for subscriber in category.subscribers.all():
-            subject = f"Новый пост в категории {category.name}!"
-            message = f"Привет, {subscriber.username}!\n\n"
-            message += f"В категории '{category.name}' появился новый пост:\n\n"
-            message += f"- {post.title} - {post.get_absolute_url()}\n\n"
-            message += "С уважением,\nАдминистрация сайта"
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[subscriber.email],
-                fail_silently=False
-            )
-
-def get_absolute_url(post):
-    if post.post_type == 'NW':
-        return reverse("news:news_detail", args=[str(post.id)])
-    else:
-        return reverse("news:articles_detail", args=[str(post.id)])

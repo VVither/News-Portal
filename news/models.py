@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-
-from .tasks import get_absolute_url, send_new_post_notification
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 class Author(models.Model):
@@ -60,8 +60,11 @@ class Post(models.Model):
     def __str__(self):
         return self.title  
     
-    def get_absolute_url(self):
-        return get_absolute_url(self)
+    def get_absolute_url(post):
+        if post.post_type == 'NW':
+            return reverse("news:news_detail", args=[str(post.id)])
+        else:
+            return reverse("news:articles_detail", args=[str(post.id)]) 
     
     def _set_categories(self, *args, **kwargs):
             if 'categories' in kwargs:
@@ -70,6 +73,25 @@ class Post(models.Model):
                     for category in categories:
                         PostCategory.objects.get_or_create(post=self, category=category)
         
+    def send_new_post_notification(self):
+        """
+        Отправляет уведомление подписчикам категории о создании нового поста.
+        """
+        for category in self.categories.all():
+            for subscriber in category.subscribers.all():
+                subject = f"Новый пост в категории {category.name}!"
+                message = f"Привет, {subscriber.username}!\n\n"
+                message += f"В категории '{category.name}' появился новый пост:\n\n"
+                message += f"- {self.title} - {self.get_absolute_url()}\n\n"
+                message += "С уважением,\nАдминистрация сайта"
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[subscriber.email],
+                    fail_silently=False
+                )
+
     def save(self, *args, **kwargs):
         # Проверка количества публикаций в день
         created_at = date.today()
@@ -84,8 +106,9 @@ class Post(models.Model):
 
         self._set_categories(*args, **kwargs)
         super().save(*args, **kwargs)
-        send_new_post_notification.delay(self.pk) 
+        self.send_new_post_notification.delay(self.pk) 
             
+
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
