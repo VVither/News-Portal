@@ -109,10 +109,11 @@ ACCOUNT_USERNAME_REQUIRED = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = '' # здесь ввести email с которого отправляются сообщения  до @
-EMAIL_HOST_PASSWORD = '' # Пароль от email
+EMAIL_HOST_USER = 'VVither' # здесь ввести email с которого отправляются сообщения  до @
+EMAIL_HOST_PASSWORD = 'zbmfvodhvuplcctn' # Пароль от email
 EMAIL_HOST_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"
+ADMINS = [('Администратор', 'VVither@yandex.ru')]
 
       # НАСТРОЙКИ АССИНХРОННОЙ РАБОТЫ
 CELERY_BROKER_URL = 'redis://localhost:6379'
