@@ -120,7 +120,7 @@ def configure_logging():
                 '()': 'django.utils.log.RequireDebugFalse',
             },
             'request_or_server_errors': {
-                '()': 'myproject.utils.RequestOrServerErrorFilter',
+                '()': 'News_Portal.utils.RequestOrServerErrorFilter',
             },
         }
     }
